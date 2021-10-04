@@ -16,8 +16,8 @@ library(tidyverse)
 
 Vectors are basic R data structures, even single value (scalar) is a vector (with lenght 1) or you can have empty vector (with lenght 0). 
 
-You can have two-dimentional vectors -- matixes.
-data frames consist of vectors bound column wise. 
+You can have two-dimentional vectors -- matrixes.
+Data frames/tibbles consist of vectors bound column wise. 
 
 There are two types of vectors:
 
@@ -85,7 +85,7 @@ c(-1, 0, 1) / 0
 
 Importantly, R has global string pool and each unique string is stored in memory only once and every use of string points to that representation. This reduces the amount of memory to store duplicated strings:
 ```{r}
-x <- "R stats TalTech"
+x <- "R stats"
 pryr::object_size(x)
 ```
 
