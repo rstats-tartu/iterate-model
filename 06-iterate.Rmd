@@ -412,7 +412,6 @@ x %>% map_dbl(2)
 
 ```{r}
 x <- list(list(1, 2, 3), list(4), list(7, 8, 9))
-x %>% map_dbl(2)
 ```
 
 
@@ -515,7 +514,12 @@ exp(mean(log(gapminder$gdpPercap)))
 
 ```{r}
 library(modelr)
-newdata <- data_grid(gapminder, country, year = 2021:2030, gdpPercap = seq(2000, 4000, by= 200))
+gdp <- gapminder %>% 
+  group_by(country) %>% 
+  filter(year == max(year)) %>% 
+  select(country, gdpPercap)
+newdata <- data_grid(gapminder, country, year = 2021:2030) %>% 
+  left_join(gdp)
 ```
 
 
@@ -525,8 +529,16 @@ coefs <- estimates %>%
   pivot_wider(names_from = term, values_from = estimate) %>% 
   rename(intercept = `(Intercept)`, b_year = year, b_gdpPercap = gdpPercap)
 
-left_join(newdata, coefs, by = "country") %>% 
+predictions <- left_join(newdata, coefs, by = "country") %>% 
   mutate(y_hat = intercept + b_year * year + b_gdpPercap * gdpPercap)
 ```
 
+
+```{r}
+predictions %>% 
+  group_by(country) %>% 
+  mutate(growth = y_hat[year == 2030] - y_hat[year == 2021]) %>% 
+  ggplot(aes(x = year, y = y_hat)) +
+  geom_line(aes(group = country, color = b_year < 0, linetype = growth == max(growth)))
+```
 
